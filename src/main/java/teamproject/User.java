@@ -37,7 +37,7 @@ public final class User implements Comparable<User> {
 
     @Override
     public String toString() {
-        return "User{name='" + name + "', email='" + email + "', password='" + password;
+        return "User{name='" + name + "', email='" + email + "', password='" + password + "'}";
     }
 
     @Override

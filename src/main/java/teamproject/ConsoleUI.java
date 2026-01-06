@@ -34,6 +34,7 @@ public final class ConsoleUI {
 		System.out.println("=".repeat(50));
 		System.out.println("1. Загрузить данные");
 		System.out.println("2. Отсортировать и вывести");
+		System.out.println("3. Искать кол-во повторений пользователя в списке");
 		System.out.println("0. Выйти");
 		System.out.print("Ваш выбор: ");
 	}
@@ -105,9 +106,8 @@ public final class ConsoleUI {
 		printUsers(users);
 	}
 
-	public static InputSource chooseInputSource() {
-		showDataSourceMenu();
-		return switch (readInt()) {
+	private static InputSource chooseInputSource(int choise) {
+		return switch (choise) {
 		case 1 -> new InputSourceManual();
 		case 2 -> new InputSourceRandom();
 		case 3 -> new InputSourceFile("data.txt");
@@ -116,6 +116,27 @@ public final class ConsoleUI {
 			yield new InputSourceFile("data.txt");
 		}
 		};
+	}
+	
+	public static User inputUser() {
+		CustomList<User> user = fillUsers(new CustomList<User>(), 1, 1);
+		return user.get(0);
+	}
+	
+	public static int getCountUsers(CustomList<User> users,User user) {
+		return new ThreadCounter().getCountElement(users, user);
+	}
+	
+	public static CustomList<User> fillUsers(CustomList<User> users, int size, int choise) {
+		var source = ConsoleUI.chooseInputSource(choise);
+		try {
+			users = source.provide(size);
+			System.out.println("Загружено " + users.size() + " пользователей.");
+		} catch (Exception e) {
+			System.err.println(" Ошибка при загрузке: " + e.getMessage());
+			users = new CustomList<>();
+		}
+		return users;
 	}
 
 	public static void printUsers(CustomList<User> list) {

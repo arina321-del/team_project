@@ -3,7 +3,6 @@ package teamproject;
 public class Main {
 	public static void main(String[] args) {
 		CustomList<User> users = new CustomList<>();
-		SortingStrategyContext strategyContext = new SortingStrategyContext();
 
 		System.out.println("Добро пожаловать в систему сортировки пользователей!");
 		ConsoleUI.pause();
@@ -20,15 +19,8 @@ public class Main {
 					System.out.println("Количество должно быть > 0. Пропуск.");
 					break;
 				}
-
-				var source = ConsoleUI.chooseInputSource();
-				try {
-					users = source.provide(size);
-					System.out.println("Загружено " + users.size() + " пользователей.");
-				} catch (Exception e) {
-					System.err.println("Ошибка при загрузке: " + e.getMessage());
-					users = new CustomList<>();
-				}
+				ConsoleUI.showDataSourceMenu();
+				users = ConsoleUI.fillUsers(users, size,ConsoleUI.readInt());
 				ConsoleUI.pause();
 			}
 
@@ -36,12 +28,26 @@ public class Main {
 				ConsoleUI.clearScreen();
 				if (users.isEmpty()) {
 					System.out.println(" Нет данных для сортировки. Сначала загрузите пользователей.");
-				} else {
-					ConsoleUI.showUsers("\nДо сортировки:", users);
-					ConsoleUI.sort(users);
-					ConsoleUI.showUsers("\nПосле сортировки:", users);
-					ConsoleUI.pause();
+					break;
 				}
+				ConsoleUI.showUsers("\nДо сортировки:", users);
+				ConsoleUI.sort(users);
+				ConsoleUI.showUsers("\nПосле сортировки:", users);
+				ConsoleUI.pause();
+
+			}
+
+			case 3 -> {
+				ConsoleUI.clearScreen();
+				if (users.isEmpty() ) {
+					System.out.println(" Нет данных. Сначала загрузите пользователей.");
+					break;
+				}
+				User user = ConsoleUI.inputUser();
+			
+				int count = ConsoleUI.getCountUsers(users, user);
+				
+				System.out.println("Пользователь: " + user + " повторяется " + count + " раз");
 			}
 
 			case 0 -> {

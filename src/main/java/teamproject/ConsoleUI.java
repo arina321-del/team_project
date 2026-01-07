@@ -74,6 +74,10 @@ public final class ConsoleUI {
             strategy.sort(list);
             System.out.println("\nПосле сортировки:");
             printUsers(list);
+            System.out.print("\nСохранить результат в файл? (1 - Да, 0 - Нет): ");
+            if (readInt() == 1) {
+                FileHandler.appendResults(list);
+            }
         } catch (Exception e) {
             System.err.println("Ошибка сортировки: " + e.getMessage());
         }

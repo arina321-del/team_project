@@ -3,128 +3,187 @@ package teamproject;
 import java.util.Scanner;
 
 public final class ConsoleUI {
-    private static final Scanner SCANNER = new Scanner(System.in);
+	private static final Scanner SCANNER = new Scanner(System.in);
+	private static final String FILE_NAME = "data.txt";
 
-    private ConsoleUI() {}
+	private ConsoleUI() {
+	}
 
-    public static int readInt(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            try {
-                return Integer.parseInt(SCANNER.nextLine().trim());
-            } catch (NumberFormatException e) {
-                System.err.println("Некорректное число. Попробуйте снова.");
-            }
-        }
-    }
+	public static int readInt(String prompt) {
+		while (true) {
+			System.out.print(prompt);
+			try {
+				return Integer.parseInt(SCANNER.nextLine().trim());
+			} catch (NumberFormatException e) {
+				System.err.println("Некорректное число. Попробуйте снова.");
+			}
+		}
+	}
 
-    public static int readInt() {
-        return readInt("");
-    }
+	public static int readInt() {
+		return readInt("");
+	}
 
-    public static String readString(String prompt) {
-        System.out.print(prompt);
-        return SCANNER.nextLine().trim();
-    }
+	public static String readString(String prompt) {
+		System.out.print(prompt);
+		return SCANNER.nextLine().trim();
+	}
 
-    public static void showMainMenu() {
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("  СИСТЕМА СОРТИРОВКИ ПОЛЬЗОВАТЕЛЕЙ");
-        System.out.println("=".repeat(50));
-        System.out.println("1. Загрузить данные");
-        System.out.println("2. Отсортировать и вывести");
-        System.out.println("0. Выйти");
-        System.out.print("Ваш выбор: ");
-    }
+	public static void showMainMenu() {
+		System.out.println("\n" + "=".repeat(50));
+		System.out.println("  СИСТЕМА СОРТИРОВКИ ПОЛЬЗОВАТЕЛЕЙ");
+		System.out.println("=".repeat(50));
+		System.out.println("1. Загрузить данные");
+		System.out.println("2. Отсортировать и вывести");
+		System.out.println("3. Искать кол-во повторений пользователя в списке");
+		System.out.println("0. Выйти");
+		System.out.print("Ваш выбор: ");
+	}
 
-    public static void showDataSourceMenu() {
-        System.out.println("\n Источник данных:");
-        System.out.println("1. Ручной ввод");
-        System.out.println("2. Случайные данные");
-        System.out.println("3. Из файла (data.txt)");
-        System.out.print("Ваш выбор: ");
-    }
+	public static void showDataSourceMenu() {
+		System.out.println("\n Источник данных:");
+		System.out.println("1. Ручной ввод");
+		System.out.println("2. Случайные данные");
+		System.out.println("3. Из файла (data.txt)");
+		System.out.print("Ваш выбор: ");
+	}
 
-    public static void sortAndPrint(CustomList<User> list) {
-        if (list.isEmpty()) {
-            System.out.println(" Нет данных для сортировки. Сначала загрузите пользователей.");
-            return;
-        }
+	private static void showChooseCriterion() {
+		System.out.println("\n Выберите стратегию сортировки:");
+		System.out.println("1. По имени");
+		System.out.println("2. По email");
+		System.out.println("3. По паролю");
+		System.out.print("Ваш выбор: ");
+	}
 
-        System.out.println("\n Выберите стратегию сортировки:");
-        System.out.println("1. По имени");
-        System.out.println("2. По email");
-        System.out.println("3. По паролю");
-        System.out.print("Ваш выбор: ");
+	public static void writeInFile(CustomList<User> users) {
+		System.out.println("Загрузить в файл?");
+		System.out.println("1. Да");
+		System.out.println("Или введите любую цифру, чтобы выйти ...");
+		System.out.print("Ваш выбор: ");
 
-        SortingStrategy strategy = switch (readInt()) {
-            case 1 -> new SortingStrategyName();
-            case 2 -> new SortingStrategyEmail();
-            case 3 -> new SortingStrategyPassword();
-            default -> {
-                System.out.println(" Выбрана базовая стратегия.");
-                yield new SortingStrategyName();
-            }
-        };
+		if (readInt() == 1) {
+			FileHandler.appendResults(users);
+		} else {
+			return;
+		}
 
-        System.out.println("\nДо сортировки:");
-        printUsers(list);
+	}
 
-        try {
-            strategy.sort(list);
-            System.out.println("\nПосле сортировки:");
-            printUsers(list);
-        } catch (Exception e) {
-            System.err.println("Ошибка сортировки: " + e.getMessage());
-        }
-    }
+	private static SortingStrategy getCriterion(SortingStrategy nameCriterion, SortingStrategy emailCriterion,
+			SortingStrategy passwordCriterion) {
 
-    public static InputSource chooseInputSource() {
-        showDataSourceMenu();
-        return switch (readInt()) {
-            case 1 -> new InputSourceManual();
-            case 2 -> new InputSourceRandom();
-            case 3 -> new InputSourceFile("data.txt");
-            default -> {
-                System.out.println(" Выбран ввод из файла.");
-                yield new InputSourceFile("data.txt");
-            }
-        };
-    }
+		showChooseCriterion();
 
-    public static void printUsers(CustomList<User> list) {
-        if (list.isEmpty()) {
-            System.out.println("Список пользователей пуст.");
-            return;
-        }
+		SortingStrategy strategy = switch (readInt()) {
+		case 1 -> nameCriterion;
+		case 2 -> emailCriterion;
+		case 3 -> passwordCriterion;
+		default -> {
+			System.out.println("Выбрана базовая стратегия.");
+			yield nameCriterion;
+		}
+		};
+		return strategy;
+	}
 
-        System.out.println("\n" + "-".repeat(60));
-        System.out.printf("%-20s %-25s %s%n", "ИМЯ", "EMAIL", "ПАРОЛЬ");
-        System.out.println("-".repeat(60));
+	public static SortingStrategy chooseSortStrategy(CustomList<User> list) {
 
-        list.stream()
-                .forEach(u -> System.out.printf(
-                        "%-20s %-25s %s%n",
-                        u.getName(),
-                        u.getEmail(),
-                        maskPassword(u.getPassword())
-                ));
+		System.out.println("\n Выберите стратегию сортировки:");
+		System.out.println("1. Сортировка четных значений длин");
+		System.out.println("2. Сортировка стандартная");
+		System.out.print("Ваш выбор: ");
 
-        System.out.println("-".repeat(60));
-        System.out.println("Всего: " + list.size() + " пользователей.");
-    }
+		SortingStrategy strategy = switch (readInt()) {
+		case 1 -> getCriterion(new SortEvenStrategyName(), new SortEvenStrategyEmail(), new SortEvenStrategyPassword());
+		case 2 -> getBasicCriterion();
+		default -> {
+			System.out.println(" Выбрана базовая стратегия.");
+			yield getBasicCriterion();
+		}
+		};
 
-    private static String maskPassword(String pwd) {
-        return pwd.length() <= 2 ? pwd : "*".repeat(pwd.length() - 2) + pwd.substring(pwd.length() - 2);
-    }
+		return strategy;
+	}
 
-    public static void pause() {
-        System.out.print("\nНажмите Enter для продолжения...");
-        SCANNER.nextLine();
-    }
+	private static SortingStrategy getBasicCriterion() {
+		return getCriterion(new SortingStrategyName(), new SortingStrategyEmail(), new SortingStrategyPassword());
+	}
 
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
+	public static void sort(CustomList<User> users) {
+		SortingStrategyContext strategyContext = new SortingStrategyContext(chooseSortStrategy(users));
+		try {
+			strategyContext.sort(users);
+		} catch (Exception e) {
+			System.err.println("Ошибка сортировки: " + e.getMessage());
+		}
+
+	}
+
+	public static void showUsers(String msg, CustomList<User> users) {
+		System.out.println(msg);
+		printUsers(users);
+	}
+
+	private static InputSource chooseInputSource(int choise) {
+		return switch (choise) {
+		case 1 -> new InputSourceManual();
+		case 2 -> new InputSourceRandom();
+		case 3 -> new InputSourceFile(FILE_NAME);
+		default -> {
+			System.out.println("Выбран ввод из файла.");
+			yield new InputSourceFile(FILE_NAME);
+		}
+		};
+	}
+
+	public static User inputUser() {
+		CustomList<User> user = fillUsers(new CustomList<User>(), 1, 1);
+		return user.get(0);
+	}
+
+	public static int getCountUsers(CustomList<User> users, User user) {
+		return new ThreadCounter().getCountElement(users, user);
+	}
+
+	public static CustomList<User> fillUsers(CustomList<User> users, int size) {
+		return fillUsers(users, size, readInt());
+	}
+
+	public static CustomList<User> fillUsers(CustomList<User> users, int size, int choise) {
+		try {
+			users = ConsoleUI.chooseInputSource(choise).provide(size);
+			System.out.println("Загружено " + users.size() + " пользователей.");
+		} catch (Exception e) {
+			System.err.println(" Ошибка при загрузке: " + e.getMessage());
+			users = new CustomList<>();
+		}
+		return users;
+	}
+
+	public static void printUsers(CustomList<User> list) {
+		if (list.isEmpty()) {
+			System.out.println("Список пользователей пуст.");
+			return;
+		}
+
+		System.out.println("\n" + "-".repeat(60));
+		System.out.printf("%-20s %-25s %s%n", "ИМЯ", "EMAIL", "ПАРОЛЬ");
+		System.out.println("-".repeat(60));
+
+		list.stream().forEach(System.out::println);
+
+		System.out.println("-".repeat(60));
+		System.out.println("Всего: " + list.size() + " пользователей.");
+	}
+
+	public static void pause() {
+		System.out.print("\nНажмите Enter для продолжения...");
+		SCANNER.nextLine();
+	}
+
+	public static void clearScreen() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+	}
 }

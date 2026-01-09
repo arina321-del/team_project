@@ -7,16 +7,16 @@ import java.util.function.Function;
 
 public class SortEven {
 
-	public static void sort(CustomList<User> list, Function<User, String> sortCriteria) {
-		Comparator<User> comparator = Comparator.comparing(sortCriteria, Comparator.comparingInt(String::length));
-		CustomList<User> evenElements = new CustomList<>();
+	public static <T> void sort(CustomList<T> list, Function<T, String> sortCriteria) {
+		Comparator<T> comparator = Comparator.comparing(sortCriteria, Comparator.comparingInt(String::length));
+		CustomList<T> evenElements = new CustomList<>();
 		List<Integer> evenElementsIndex = new ArrayList<>();
 
 		for (int i = 0; i < list.size(); i++) {
-			User user = list.get(i);
-			int length = sortCriteria.apply(user).length();
+			T object = list.get(i);
+			int length = sortCriteria.apply(object).length();
 			if (length % 2 == 0) {
-				evenElements.add(user);
+				evenElements.add(object);
 				evenElementsIndex.add(i);
 			}
 		}

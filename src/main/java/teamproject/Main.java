@@ -20,7 +20,7 @@ public class Main {
 					break;
 				}
 				ConsoleUI.showDataSourceMenu();
-				users = ConsoleUI.fillUsers(users, size,ConsoleUI.readInt());
+				users = ConsoleUI.fillUsers(users, size);
 				ConsoleUI.pause();
 			}
 
@@ -33,6 +33,7 @@ public class Main {
 				ConsoleUI.showUsers("\nДо сортировки:", users);
 				ConsoleUI.sort(users);
 				ConsoleUI.showUsers("\nПосле сортировки:", users);
+				ConsoleUI.writeInFile(users);
 				ConsoleUI.pause();
 
 			}

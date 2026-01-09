@@ -17,11 +17,11 @@ public class ThreadCounter {
 		List<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
 
 		int size = users.size();
-		int half = size / poolAmount;
+		int part = size / poolAmount;
 
 		for (int i = 0; i < poolAmount; i++) {
-			int start = i * half;
-			int end = (i == poolAmount - 1) ? size : half + start;
+			int start = i * part;
+			int end = (i == poolAmount - 1) ? size : part + start;
 
 			Callable<Integer> callable = new Callable<Integer>() {
 

@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public final class ConsoleUI {
 	private static final Scanner SCANNER = new Scanner(System.in);
+	private static final String FILE_NAME = "data.txt";
 
 	private ConsoleUI() {
 	}
@@ -55,6 +56,20 @@ public final class ConsoleUI {
 		System.out.print("Ваш выбор: ");
 	}
 
+	public static void writeInFile(CustomList<User> users) {
+		System.out.println("Загрузить в файл?");
+		System.out.println("1. Да");
+		System.out.println("Или введите любую цифру, чтобы выйти ...");
+		System.out.print("Ваш выбор: ");
+
+		if (readInt() == 1) {
+			FileHandler.appendResults(users);
+		} else {
+			return;
+		}
+
+	}
+
 	private static SortingStrategy getCriterion(SortingStrategy nameCriterion, SortingStrategy emailCriterion,
 			SortingStrategy passwordCriterion) {
 
@@ -81,14 +96,18 @@ public final class ConsoleUI {
 
 		SortingStrategy strategy = switch (readInt()) {
 		case 1 -> getCriterion(new SortEvenStrategyName(), new SortEvenStrategyEmail(), new SortEvenStrategyPassword());
-		case 2 -> getCriterion(new SortingStrategyName(), new SortingStrategyEmail(), new SortingStrategyPassword());
+		case 2 -> getBasicCriterion();
 		default -> {
 			System.out.println(" Выбрана базовая стратегия.");
-			yield getCriterion(new SortingStrategyName(), new SortingStrategyEmail(), new SortingStrategyPassword());
+			yield getBasicCriterion();
 		}
 		};
 
 		return strategy;
+	}
+
+	private static SortingStrategy getBasicCriterion() {
+		return getCriterion(new SortingStrategyName(), new SortingStrategyEmail(), new SortingStrategyPassword());
 	}
 
 	public static void sort(CustomList<User> users) {
@@ -110,27 +129,30 @@ public final class ConsoleUI {
 		return switch (choise) {
 		case 1 -> new InputSourceManual();
 		case 2 -> new InputSourceRandom();
-		case 3 -> new InputSourceFile("data.txt");
+		case 3 -> new InputSourceFile(FILE_NAME);
 		default -> {
 			System.out.println("Выбран ввод из файла.");
-			yield new InputSourceFile("data.txt");
+			yield new InputSourceFile(FILE_NAME);
 		}
 		};
 	}
-	
+
 	public static User inputUser() {
 		CustomList<User> user = fillUsers(new CustomList<User>(), 1, 1);
 		return user.get(0);
 	}
-	
-	public static int getCountUsers(CustomList<User> users,User user) {
+
+	public static int getCountUsers(CustomList<User> users, User user) {
 		return new ThreadCounter().getCountElement(users, user);
 	}
-	
+
+	public static CustomList<User> fillUsers(CustomList<User> users, int size) {
+		return fillUsers(users, size, readInt());
+	}
+
 	public static CustomList<User> fillUsers(CustomList<User> users, int size, int choise) {
-		var source = ConsoleUI.chooseInputSource(choise);
 		try {
-			users = source.provide(size);
+			users = ConsoleUI.chooseInputSource(choise).provide(size);
 			System.out.println("Загружено " + users.size() + " пользователей.");
 		} catch (Exception e) {
 			System.err.println(" Ошибка при загрузке: " + e.getMessage());
@@ -149,15 +171,10 @@ public final class ConsoleUI {
 		System.out.printf("%-20s %-25s %s%n", "ИМЯ", "EMAIL", "ПАРОЛЬ");
 		System.out.println("-".repeat(60));
 
-		list.stream().forEach(
-				u -> System.out.printf("%-20s %-25s %s%n", u.getName(), u.getEmail(), maskPassword(u.getPassword())));
+		list.stream().forEach(System.out::println);
 
 		System.out.println("-".repeat(60));
 		System.out.println("Всего: " + list.size() + " пользователей.");
-	}
-
-	private static String maskPassword(String pwd) {
-		return pwd.length() <= 2 ? pwd : "*".repeat(pwd.length() - 2) + pwd.substring(pwd.length() - 2);
 	}
 
 	public static void pause() {

@@ -1,4 +1,9 @@
-package teamproject;
+package teamproject.sort.strategy;
+
+import teamproject.entities.User;
+import teamproject.sort.SortEven;
+import teamproject.sort.SortEvenStrategy;
+import teamproject.utils.CustomList;
 
 public class SortEvenStrategyEmail implements SortEvenStrategy {
 

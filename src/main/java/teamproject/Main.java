@@ -1,5 +1,9 @@
 package teamproject;
 
+import teamproject.entities.User;
+import teamproject.ui.ConsoleUI;
+import teamproject.utils.CustomList;
+
 public class Main {
 	public static void main(String[] args) {
 		CustomList<User> users = new CustomList<>();
@@ -26,13 +30,13 @@ public class Main {
 
 			case 2 -> {
 				ConsoleUI.clearScreen();
-				if (users.isEmpty()) {
-					System.out.println(" Нет данных для сортировки. Сначала загрузите пользователей.");
+				if (isEmpty(users)) {
 					break;
 				}
 				ConsoleUI.showUsers("\nДо сортировки:", users);
 				ConsoleUI.sort(users);
 				ConsoleUI.showUsers("\nПосле сортировки:", users);
+				
 				ConsoleUI.writeInFile(users);
 				ConsoleUI.pause();
 
@@ -40,14 +44,13 @@ public class Main {
 
 			case 3 -> {
 				ConsoleUI.clearScreen();
-				if (users.isEmpty() ) {
-					System.out.println(" Нет данных. Сначала загрузите пользователей.");
+				if (isEmpty(users)) {
 					break;
 				}
 				User user = ConsoleUI.inputUser();
-			
+
 				int count = ConsoleUI.getCountUsers(users, user);
-				
+
 				System.out.println("Пользователь: " + user + " повторяется " + count + " раз");
 			}
 
@@ -62,5 +65,13 @@ public class Main {
 			}
 			}
 		}
+	}
+
+	private static boolean isEmpty(CustomList<User> users) {
+		boolean empty = users.isEmpty() || users == null;
+		if (empty) {
+			System.out.println(" Нет данных. Сначала загрузите пользователей.");
+		}
+		return empty;
 	}
 }

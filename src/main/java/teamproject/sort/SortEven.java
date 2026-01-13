@@ -1,14 +1,16 @@
-package teamproject;
+package teamproject.sort;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import teamproject.utils.CustomList;
+
 public class SortEven {
 
 	public static <T> void sort(CustomList<T> list, Function<T, String> sortCriteria) {
-		Comparator<T> comparator = Comparator.comparing(sortCriteria, Comparator.comparingInt(String::length));
+
 		CustomList<T> evenElements = new CustomList<>();
 		List<Integer> evenElementsIndex = new ArrayList<>();
 
@@ -21,7 +23,7 @@ public class SortEven {
 			}
 		}
 
-		Sort.sort(evenElements, comparator);
+		Sort.sort(evenElements, Comparator.comparing(sortCriteria, Comparator.comparingInt(String::length)));
 
 		for (int i = 0; i < evenElementsIndex.size(); i++) {
 			list.set(evenElementsIndex.get(i), evenElements.get(i));

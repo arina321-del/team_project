@@ -1,46 +1,46 @@
-package teamproject;
+package teamproject.source;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
+import static teamproject.utils.Constants.SPLIT_LIMIT;
+import static teamproject.utils.Constants.SPLIT_SEPARATOR;
 
-public class InputSourceFile implements InputSource{
-    private final String filePath;
+import teamproject.entities.User;
+import teamproject.utils.CustomList;
+import teamproject.validations.ValidationException;
 
-    public InputSourceFile(String filePath) {
-        this.filePath = filePath;
-    }
+public class InputSourceFile implements InputSource {
+	private final String filePath;
 
-    @Override
-    public CustomList<User> provide(int size) {
-        CustomList<User> list = new CustomList<>();
+	public InputSourceFile(String filePath) {
+		this.filePath = filePath;
+	}
 
-        try (Stream<String> lines = Files.lines(Path.of(filePath))) {
-            lines.limit(size)
-                    .map(this::parseLine)
-                    .forEach(list::add);
-        } catch (IOException e) {
-            throw new RuntimeException("Не удалось прочитать файл: " + filePath, e);
-        }
+	@Override
+	public CustomList<User> provide(int size) {
+		CustomList<User> list = new CustomList<>();
 
-        return list;
-    }
+		try (Stream<String> lines = Files.lines(Path.of(filePath))) {
+			lines.limit(size).map(this::parseLine).forEach(list::add);
+		} catch (IOException e) {
+			throw new RuntimeException("Не удалось прочитать файл: " + filePath, e);
+		}
 
-    private User parseLine(String line) {
-        String[] parts = line.split(";", 3);
-        if (parts.length != 3) {
-            throw new ValidationException("Неверный формат строки: '" + line + "' (ожидается: имя;email;пароль)");
-        }
+		return list;
+	}
 
-        String name = parts[0].trim();
-        String email = parts[1].trim();
-        String password = parts[2].trim();
+	private User parseLine(String line) {
+		String[] parts = line.split(SPLIT_SEPARATOR, SPLIT_LIMIT);
+		if (parts.length != SPLIT_LIMIT) {
+			throw new ValidationException("Неверный формат строки: '" + line + "' (ожидается: имя;email;пароль)");
+		}
 
-        return new User.Builder()
-                .name(name)
-                .email(email)
-                .password(password)
-                .build();
-    }
+		String name = parts[0].trim();
+		String email = parts[1].trim();
+		String password = parts[2].trim();
+
+		return new User.Builder().name(name).email(email).password(password).build();
+	}
 }

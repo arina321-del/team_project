@@ -1,7 +1,10 @@
-package teamproject;
+package teamproject.source;
 
 import java.util.Random;
 import java.util.stream.IntStream;
+
+import teamproject.entities.User;
+import teamproject.utils.CustomList;
 
 public class InputSourceRandom implements InputSource{
 
@@ -22,7 +25,7 @@ public class InputSourceRandom implements InputSource{
 
     private User generateRandomUser() {
         String name = NAMES[random.nextInt(NAMES.length)] + (random.nextInt(100));
-        String email = name.toLowerCase() + "@" + DOMAINS[random.nextInt(DOMAINS.length)];
+		String email = name.toLowerCase() + "@" + DOMAINS[random.nextInt(DOMAINS.length)];
         String password = "pass" + (100000 + random.nextInt(999999));
 
         return new User.Builder()

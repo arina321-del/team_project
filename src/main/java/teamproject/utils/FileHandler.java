@@ -1,17 +1,16 @@
-package teamproject;
+package teamproject.utils;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import teamproject.entities.User;
+
 public class FileHandler {
-	private static final String FILE_NAME = "output_users.txt";
+	private static final String FILE_NAME = "src/resources/output_users.txt";
 
 	public static void appendResults(CustomList<User> users) {
-		if (users == null || users.isEmpty()) {
-			System.out.println("Список пуст, нечего записывать.");
-			return;
-		}
+
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
 			writer.write("=== Новая запись результатов (" + java.time.LocalDateTime.now() + ") ===\n");
 			for (int i = 0; i < users.size(); i++) {

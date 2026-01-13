@@ -1,8 +1,14 @@
-package teamproject;
+package teamproject.entities;
 
 import java.util.Objects;
 
-public final class User implements Comparable<User> {
+import teamproject.validations.UserValidator;
+
+import static teamproject.utils.Constants.MASK_PASSWORD_SIGN;
+import static teamproject.utils.Constants.NUMBER_LAST_PASSWORD_SIGNS;
+import static teamproject.utils.Constants.OUTPUT_USERS_FORMAT;
+
+public final class User {
 
 	private final String name;
 	private final String password;
@@ -46,24 +52,13 @@ public final class User implements Comparable<User> {
 
 	@Override
 	public String toString() {
-		return String.format("%-20s %-25s %s%n", name, email, maskPassword());
+		return String.format(OUTPUT_USERS_FORMAT, name, email, maskPassword());
 	}
-	
+
 	private String maskPassword() {
-		return password.length() <= 2 ? password : "*".repeat(password.length() - 2) + password.substring(password.length() - 2);
-	}
-	
-	@Override
-	public int compareTo(User other) {
-		int cmp = this.name.compareToIgnoreCase(other.name);
-		if (cmp != 0)
-			return cmp;
-
-		cmp = this.email.compareToIgnoreCase(other.email);
-		if (cmp != 0)
-			return cmp;
-
-		return this.password.compareTo(other.password); // пароль — чувствителен к регистру (без ignoreCase)
+		return password.length() <= NUMBER_LAST_PASSWORD_SIGNS ? password
+				: MASK_PASSWORD_SIGN.repeat(password.length() - NUMBER_LAST_PASSWORD_SIGNS)
+						+ password.substring(password.length() - NUMBER_LAST_PASSWORD_SIGNS);
 	}
 
 	public static class Builder {

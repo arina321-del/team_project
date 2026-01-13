@@ -1,10 +1,29 @@
-package teamproject;
+package teamproject.ui;
 
 import java.util.Scanner;
 
+import teamproject.entities.User;
+import teamproject.sort.SortingStrategy;
+import teamproject.sort.strategy.SortEvenStrategyEmail;
+import teamproject.sort.strategy.SortEvenStrategyName;
+import teamproject.sort.strategy.SortEvenStrategyPassword;
+import teamproject.sort.strategy.SortingStrategyContext;
+import teamproject.sort.strategy.SortingStrategyEmail;
+import teamproject.sort.strategy.SortingStrategyName;
+import teamproject.sort.strategy.SortingStrategyPassword;
+import teamproject.source.InputSource;
+import teamproject.source.InputSourceFile;
+import teamproject.source.InputSourceManual;
+import teamproject.source.InputSourceRandom;
+import teamproject.utils.CustomList;
+import teamproject.utils.FileHandler;
+import teamproject.utils.ThreadCounter;
+
+import static teamproject.utils.Constants.*;
+
 public final class ConsoleUI {
 	private static final Scanner SCANNER = new Scanner(System.in);
-	private static final String FILE_NAME = "data.txt";
+	private static final String FILE_NAME = "src/resources/data.txt";
 
 	private ConsoleUI() {
 	}
@@ -30,9 +49,9 @@ public final class ConsoleUI {
 	}
 
 	public static void showMainMenu() {
-		System.out.println("\n" + "=".repeat(50));
+		System.out.println("\n" + REAPETER.repeat(REAPET_NUMBER));
 		System.out.println("  СИСТЕМА СОРТИРОВКИ ПОЛЬЗОВАТЕЛЕЙ");
-		System.out.println("=".repeat(50));
+		System.out.println(REAPETER.repeat(REAPET_NUMBER));
 		System.out.println("1. Загрузить данные");
 		System.out.println("2. Отсортировать и вывести");
 		System.out.println("3. Искать кол-во повторений пользователя в списке");
@@ -57,12 +76,12 @@ public final class ConsoleUI {
 	}
 
 	public static void writeInFile(CustomList<User> users) {
-		System.out.println("Загрузить в файл?");
+		System.out.println("Загрузить данные в файл?");
 		System.out.println("1. Да");
 		System.out.println("Или введите любую цифру, чтобы выйти ...");
 		System.out.print("Ваш выбор: ");
 
-		if (readInt() == 1) {
+		if (readInt() == USER_CHOISE_ONE) {
 			FileHandler.appendResults(users);
 		} else {
 			return;
@@ -138,7 +157,7 @@ public final class ConsoleUI {
 	}
 
 	public static User inputUser() {
-		CustomList<User> user = fillUsers(new CustomList<User>(), 1, 1);
+		CustomList<User> user = fillUsers(new CustomList<User>(), 1, USER_CHOISE_ONE);
 		return user.get(0);
 	}
 
@@ -167,13 +186,13 @@ public final class ConsoleUI {
 			return;
 		}
 
-		System.out.println("\n" + "-".repeat(60));
-		System.out.printf("%-20s %-25s %s%n", "ИМЯ", "EMAIL", "ПАРОЛЬ");
-		System.out.println("-".repeat(60));
+		System.out.println("\n" + MINUS_REAPETER.repeat(REAPET_NUMBER));
+		System.out.printf(OUTPUT_USERS_FORMAT, "ИМЯ", "EMAIL", "ПАРОЛЬ");
+		System.out.println(MINUS_REAPETER.repeat(REAPET_NUMBER));
 
 		list.stream().forEach(System.out::println);
 
-		System.out.println("-".repeat(60));
+		System.out.println(MINUS_REAPETER.repeat(REAPET_NUMBER));
 		System.out.println("Всего: " + list.size() + " пользователей.");
 	}
 
@@ -183,7 +202,7 @@ public final class ConsoleUI {
 	}
 
 	public static void clearScreen() {
-		System.out.print("\033[H\033[2J");
+		System.out.print(CLEAR_DISPLAY);
 		System.out.flush();
 	}
 }

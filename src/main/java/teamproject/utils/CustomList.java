@@ -1,4 +1,4 @@
-package teamproject;
+package teamproject.utils;
 
 import java.util.*;
 import java.util.stream.Stream;

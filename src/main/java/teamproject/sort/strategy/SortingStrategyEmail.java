@@ -1,6 +1,11 @@
-package teamproject;
+package teamproject.sort.strategy;
 
 import java.util.Comparator;
+
+import teamproject.entities.User;
+import teamproject.sort.Sort;
+import teamproject.sort.SortingStrategy;
+import teamproject.utils.CustomList;
 
 public class SortingStrategyEmail implements SortingStrategy{
 
